@@ -1,0 +1,84 @@
+service: notebook-api
+frameworkVersion: '3'
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  profile: ${env:AWS_PROFILE}
+  region: eu-north-1
+  iam:
+    role: ${env:AWS_IAM_ROLE}
+  environment:
+    DYNAMO_DB_TABLE: ${env:DYNAMO_DB_TABLE}
+    APP_KEY: ${env:APP_KEY}
+
+# APP_KEY -> USE KMS KEY OR AWS.SSM
+      
+plugins:
+  - serverless-webpack
+
+package: 
+  individually: true
+
+functions:
+  bookRoom:
+    handler: functions/bookRoom/index.handler
+    events:
+      - httpApi:
+          path: '/book'
+          method: POST
+  bookRoomAndLockDates:
+    handler: functions/bookRoomLockDates/index.handler
+    events:
+      - httpApi:
+          path: '/bookings'
+          method: POST
+  queryRooms:
+    handler:  functions/get/availableRooms/index.handler
+    events:
+      - httpApi:
+          path: '/rooms'
+          method: GET
+  currentBookings:
+    handler:  functions/get/currentBookings/index.handler
+    events:
+      - httpApi:
+          path: '/bookings'
+          method: GET
+  deleteBooking:
+    handler: functions/delete/index.handler 
+    events:
+      - httpApi:
+          path: '/bookings/{id}'
+          method: DELETE
+  updateBooking:
+    handler: functions/update/index.handler 
+    events:
+      - httpApi:
+          path: '/bookings/{id}'
+          method: PATCH
+  addRoom:
+    handler: functions/addRoom/index.handler 
+    events:
+      - httpApi:
+          path: '/addroom'
+          method: POST
+
+resources:
+ Resources:
+    teamDb:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: NOTES
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
