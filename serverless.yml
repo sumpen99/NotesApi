@@ -22,49 +22,42 @@ package:
   individually: true
 
 functions:
-  bookRoom:
-    handler: functions/bookRoom/index.handler
+  getNotes:
+    handler: api/get/notes.handler
     events:
       - httpApi:
-          path: '/book'
-          method: POST
-  bookRoomAndLockDates:
-    handler: functions/bookRoomLockDates/index.handler
-    events:
-      - httpApi:
-          path: '/bookings'
-          method: POST
-  queryRooms:
-    handler:  functions/get/availableRooms/index.handler
-    events:
-      - httpApi:
-          path: '/rooms'
+          path: '/api/notes'
           method: GET
-  currentBookings:
-    handler:  functions/get/currentBookings/index.handler
+  postNotes:
+    handler: api/post/notes.handler
     events:
       - httpApi:
-          path: '/bookings'
-          method: GET
-  deleteBooking:
-    handler: functions/delete/index.handler 
+          path: '/api/notes'
+          method: POST
+  putNotes:
+    handler: api/put/notes.handler
     events:
       - httpApi:
-          path: '/bookings/{id}'
+          path: '/api/notes'
+          method: PUT
+  deleteNotes:
+    handler: api/delete/notes.handler
+    events:
+      - httpApi:
+          path: '/api/notes'
           method: DELETE
-  updateBooking:
-    handler: functions/update/index.handler 
+  signup:
+    handler: api/user/signup.handler 
     events:
       - httpApi:
-          path: '/bookings/{id}'
-          method: PATCH
-  addRoom:
-    handler: functions/addRoom/index.handler 
-    events:
-      - httpApi:
-          path: '/addroom'
+          path: '/api/user/signup'
           method: POST
-
+  login:
+    handler: api/user/login.handler 
+    events:
+      - httpApi:
+          path: '/api/user/login'
+          method: POST
 resources:
  Resources:
     teamDb:

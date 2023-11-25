@@ -1,10 +1,11 @@
-const createUser = (userId,username,password,firstname,lastname) =>{
+const createUser = (userId,username,password,email,firstname,lastname) =>{
     return {
         PK:`USER#${username}`,
-        SK:`USER#${username}`,
+        SK:`ACCOUNT#${email}`,
         id:userId,
         username:username,
         password:password,
+        email:email,
         firstname:firstname,
         lastname:lastname,
         createdAt:new Date()
@@ -17,18 +18,20 @@ const sparseUser = (user) =>{
         username:user.username,
         firstname:user.firstname,
         lastname:user.lastname,
+        email:email,
         createdAt:user.createdAt
     }
 }
 
 const createNote = (username,noteId,title,text) =>{
+    const createdAt = new Date();
     return {
         PK:`USER#${username}`,
         SK:`NOTE#ALIVE#${noteId}`,
-        id:`${noteId}`,
+        id:noteId,
         title:title,
         text:text,
-        createdAt:new Date()
+        createdAt:createdAt
     }
 }
 
@@ -45,6 +48,7 @@ const user = {
     id:"",
     username:"",
     password:"",
+    email:"",
     firstname:"",
     lastname:"",
     dateOfCreation:Date()
@@ -62,7 +66,7 @@ const note = {
 *******************************************
 GET USER
 PK = USER#{username}
-SK = USER#{username}
+SK = ACCOUNT#{email}
 *******************************************
 GET ALL NOTES  
 PK = USER#{username}

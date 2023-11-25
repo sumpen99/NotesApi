@@ -1,10 +1,10 @@
-const {SERVER} = require("../database/dynamodb")
-const {generateToken} = require("../lib/authentication")
-const bcrypt = require("bcrypt");
+const {SERVER} = require("../../database/dynamodb")
+const {generateToken} = require("../../lib/authentication")
+const bcrypt = require("bcryptjs");
 const Payload = require("./payload")
-const {userParams} = require("../query/get")
-const Response = require("../util/response");
-const { ResponseCode } = require("../util/responseCode");
+const {userParams} = require("../../query/get")
+const Response = require("../../util/response");
+const { ResponseCode } = require("../../util/responseCode");
 
 
 const tokenCreation = async (user,APP_KEY) =>{
@@ -39,14 +39,13 @@ const login = async (username,password,APP_KEY) =>{
     catch(error){ return {success:false,message:error.message,code:500} }
 }
 
-exports.handlerLogin = async (event,context) =>{
+exports.handler = async (event,context) =>{
     const validation = validate(["username","password"],event,"Login");
     if(!validation.passed){ return Response.create(400,{message:validation.message}); }
-    if(!event.headers.APP_KEY === process.env.APP_KEY){return Response.failed(ResponseCode.UN_AUTHORIZED)}
-    
-    const APP_KEY = event.headers.APP_KEY;
+    if(!event?.headers["APP_KEY"] === process.env.APP_KEY){return Response.failed(ResponseCode.UN_AUTHORIZED)}
+
     const item = validation.item;
-    const result = await login(item.username,item.password,APP_KEY);
+    const result = await login(item.username,item.password,event.headers["APP_KEY"]);
     if(result.success){ return Response.create(200,result) }
     return Response.create(result.code,{message:result.message});
 }
