@@ -15,7 +15,7 @@ module.exports = {
             headers: {
                 "ContentType": "application/json",
             },
-            body: JSONstringify(error.data)
+            body: JSON.stringify(error.data)
         }
     },
   

@@ -1,0 +1,12 @@
+2023-11-26T12:16:31.385Z	9b41db90-df36-42c3-992f-e504989b3804	INFO	{
+  accept: '*/*',
+  app_key: 'df6fdea1-10c3-474c-ae62-e63def80de0b',
+  'content-length': '141',
+  'content-type': 'application/json',
+  host: 'z6d05n2eig.execute-api.eu-north-1.amazonaws.com',
+  'user-agent': 'insomnia/8.3.0',
+  'x-amzn-trace-id': 'Root=1-6563371f-2de0483c4c93b911226ac57b',
+  'x-forwarded-for': '46.59.90.159',
+  'x-forwarded-port': '443',
+  'x-forwarded-proto': 'https'
+  }

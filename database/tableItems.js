@@ -1,7 +1,21 @@
 const createUser = (userId,username,password,email,firstname,lastname) =>{
     return {
         PK:`USER#${username}`,
-        SK:`ACCOUNT#${email}`,
+        SK:`ACCOUNT#${username}`,
+        id:userId,
+        username:username,
+        password:password,
+        email:email,
+        firstname:firstname,
+        lastname:lastname,
+        createdAt:new Date()
+    }
+}
+
+const addUserAccount = (userId,username,accountname,password,email,firstname,lastname) =>{
+    return {
+        PK:`USER#${username}`,
+        SK:`ACCOUNT#${accountname}`,
         id:userId,
         username:username,
         password:password,
@@ -18,16 +32,16 @@ const sparseUser = (user) =>{
         username:user.username,
         firstname:user.firstname,
         lastname:user.lastname,
-        email:email,
+        email:user.email,
         createdAt:user.createdAt
     }
 }
 
-const createNote = (username,noteId,title,text) =>{
+const createNote = (username,account,noteId,title,text) =>{
     const createdAt = new Date();
     return {
         PK:`USER#${username}`,
-        SK:`NOTE#ALIVE#${noteId}`,
+        SK:`ACCOUNT#${account}#NOTE#ALIVE#${noteId}`,
         id:noteId,
         title:title,
         text:text,

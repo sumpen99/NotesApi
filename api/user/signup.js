@@ -5,6 +5,7 @@ const {createUser,sparseUser} = require("../../database/tableItems");
 const Response = require("../../util/response");
 const {validate,PropCheck} = require("../../util/properties");
 const {ResponseCode} = require("../../util/responseCode");
+const {verifyAppKey} = require("../../lib/authentication");
 
 const createAccount = async (username,password,userId,email,firstname,lastname) =>{
     const user = createUser(userId,username,password,email,firstname,lastname);
@@ -13,12 +14,16 @@ const createAccount = async (username,password,userId,email,firstname,lastname) 
             TableName:process.env.DYNAMO_DB_TABLE,
             Item:user,
             ConditionExpression:
-            "attribute_not_exists(username) AND attribute_not_exists(email)",
+            "attribute_not_exists(PK) AND attribute_not_exists(SK)",
         }).promise()
-        console.log(result);
         return {success:true,user:sparseUser(user)}
     }
-    catch(error){ return {success:false,message:error.message,code:500}}
+    catch(error){ 
+        if(error.code === "ConditionalCheckFailedException"){
+            return {success:false,message:`Create account failed. User already exists in database`,code:400}   
+        }
+        return {success:false,message:`Create account failed with internal error`,code:500}
+    }
     
 }
 
@@ -33,16 +38,20 @@ const signUp = async (username,password,email,firstname,lastname) =>{
 }
 
 exports.handler = async (event,context) =>{
-    const validation = validate([
+    if(!verifyAppKey(event)){return Response.failed(ResponseCode.UN_AUTHORIZED);}
+    const properties = [
         {prop:"username",toCheck:[{type:PropCheck.MIN_LENGTH,value:3},{type:PropCheck.MAX_LENGTH,value:255}]},
         {prop:"email",toCheck:[{type:PropCheck.EMAIL,value:""}]},
         {prop:"password",toCheck:[{type:PropCheck.PASSWORD,value:""}]},
-        {prop:"firstname",toCheck:{type:PropCheck.MAX_LENGTH,value:255}},
-        {prop:"lastname",toCheck:{type:PropCheck.MAX_LENGTH,value:255}}],
-        event,"Create Account");
-  
+        {prop:"firstname",toCheck:[{type:PropCheck.MAX_LENGTH,value:255}]},
+        {prop:"lastname",toCheck:[{type:PropCheck.MAX_LENGTH,value:255}]}];
+    
+    const validation = validate(
+        properties,
+        event?.body,
+        "Create Account");
+
     if(!validation.passed){ return Response.create(400,{message:validation.message}); }
-    if(!event?.headers["APP_KEY"] === process.env.APP_KEY){return Response.failed(ResponseCode.UN_AUTHORIZED)}
 
     const item = validation.item;
     
