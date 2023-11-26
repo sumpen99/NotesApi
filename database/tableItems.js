@@ -1,28 +1,41 @@
-const createUser = (userId,username,password,email,firstname,lastname) =>{
+const {nanoid} = require("nanoid");
+
+const baseItemPropertie = () =>{
+    let id = nanoid();
+    let createdAt = new Date();
     return {
-        PK:`USER#${username}`,
-        SK:`ACCOUNT#${username}`,
-        id:userId,
-        username:username,
-        password:password,
-        email:email,
-        firstname:firstname,
-        lastname:lastname,
-        createdAt:new Date()
+        id:id,
+        createdAt:createdAt
     }
 }
 
-const addUserAccount = (userId,username,accountname,password,email,firstname,lastname) =>{
+const createUser = (username,password,email,firstname,lastname) =>{
+    const {id,createdAt} = baseItemPropertie();
     return {
         PK:`USER#${username}`,
-        SK:`ACCOUNT#${accountname}`,
-        id:userId,
+        SK:`ACCOUNT#${username}`,
+        id:id,
         username:username,
         password:password,
         email:email,
         firstname:firstname,
         lastname:lastname,
-        createdAt:new Date()
+        createdAt:createdAt
+    }
+}
+
+const addAccount = (username,accountname,password,email,firstname,lastname) =>{
+    const {id,createdAt} = baseItemPropertie();
+    return {
+        PK:`USER#${username}`,
+        SK:`ACCOUNT#${accountname}`,
+        id:id,
+        username:username,
+        password:password,
+        email:email,
+        firstname:firstname,
+        lastname:lastname,
+        createdAt:createdAt
     }
 }
 
@@ -37,22 +50,69 @@ const sparseUser = (user) =>{
     }
 }
 
-const createNote = (username,account,noteId,title,text) =>{
-    const createdAt = new Date();
+const createInitialNote = (username,accountname,title,text) =>{
+    const {id,createdAt} = baseItemPropertie();
     return {
         PK:`USER#${username}`,
-        SK:`ACCOUNT#${account}#NOTE#ALIVE#${noteId}`,
-        id:noteId,
+        SK:`ACCOUNT#${accountname}#NOTE#ALIVE#${id}`,
+        id:id,
         title:title,
         text:text,
         createdAt:createdAt
     }
 }
 
+const createUpdatedNote = (username,accountname,note,title,text) =>{
+    const {id,createdAt} = baseItemPropertie();
+    return {
+        PK:`USER#${username}`,
+        SK:`ACCOUNT#${accountname}#NOTE#ALIVE#${note.id}`,
+        id:note.id,
+        title:title,
+        text:text,
+        createdAt:note.createdAt,
+        updatedAt:createdAt
+    }
+}
+
+const createDeletedNote = (username,accountname,note) =>{
+    const {id,createdAt} = baseItemPropertie();
+    return {
+        PK:`USER#${username}`,
+        SK:`ACCOUNT#${accountname}#NOTE#DELETED#${note.id}`,
+        id:note.id,
+        title:note.title,
+        text:note.text,
+        createdAt:note.createdAt,
+        deletedAt:createdAt
+    }
+}
+
+const createRestoredNote = (username,accountname,note,title,text) =>{
+    const {id,createdAt} = baseItemPropertie();
+    return {
+        PK:`USER#${username}`,
+        SK:`ACCOUNT#${accountname}#NOTE#ALIVE#${note.id}`,
+        id:note.id,
+        title:note.title,
+        text:note.text,
+        createdAt:note.createdAt,
+        restoredAt:createdAt
+    }
+}
+
+const sparseNote = (note) =>{
+    return {
+        id:note.id,
+        createdAt:note.createdAt
+    }
+}
+
 module.exports = {
     createUser,
-    createNote,
+    createInitialNote,
     sparseUser,
+    sparseNote,
 }
 
 /*

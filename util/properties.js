@@ -27,7 +27,7 @@ const validate = (properties,body,title) =>{
                             if(!item[prop].includes(value)){ errorMessage += `[ Invalid "${prop}". Does not contain "${value}". ], `;}
                             break;
                         case PropCheck.EMAIL:
-                            // In a real application we should do a proper email verification!
+                            // In a real application we should do a proper email verification, script -> send to adress !
                             if(!item[prop].includes("@") || (item[prop].length < 5 || item[prop].length > 255)){ errorMessage += `[ Invalid email provided ], `;} 
                             break;
                         case PropCheck.MIN_LENGTH:

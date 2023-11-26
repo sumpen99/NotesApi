@@ -1,5 +1,4 @@
 const {SERVER} = require("../../database/dynamodb");
-const {nanoid} = require("nanoid");
 const bcrypt = require("bcryptjs");
 const {createUser,sparseUser} = require("../../database/tableItems");
 const Response = require("../../util/response");
@@ -7,8 +6,8 @@ const {validate,PropCheck} = require("../../util/properties");
 const {ResponseCode} = require("../../util/responseCode");
 const {verifyAppKey} = require("../../lib/authentication");
 
-const createAccount = async (username,password,userId,email,firstname,lastname) =>{
-    const user = createUser(userId,username,password,email,firstname,lastname);
+const createAccount = async (username,password,email,firstname,lastname) =>{
+    const user = createUser(username,password,email,firstname,lastname);
     try{
         const result = await SERVER.documentClient.put({
             TableName:process.env.DYNAMO_DB_TABLE,
@@ -28,29 +27,35 @@ const createAccount = async (username,password,userId,email,firstname,lastname) 
 }
 
 const signUp = async (username,password,email,firstname,lastname) =>{
-    let hash,userId;
     try{
-        hash = await bcrypt.hash(password,10);
-        userId = nanoid();
+        let hash = await bcrypt.hash(password,10);
+        return createAccount(username,hash,email,firstname,lastname);
     }
     catch(error){  return {success:false,message:error.message,code:500} }
-    return createAccount(username,hash,userId,email,firstname,lastname);
+    
 }
 
-exports.handler = async (event,context) =>{
-    if(!verifyAppKey(event)){return Response.failed(ResponseCode.UN_AUTHORIZED);}
+const validateInput = (body) =>{
     const properties = [
         {prop:"username",toCheck:[{type:PropCheck.MIN_LENGTH,value:3},{type:PropCheck.MAX_LENGTH,value:255}]},
         {prop:"email",toCheck:[{type:PropCheck.EMAIL,value:""}]},
         {prop:"password",toCheck:[{type:PropCheck.PASSWORD,value:""}]},
         {prop:"firstname",toCheck:[{type:PropCheck.MAX_LENGTH,value:255}]},
-        {prop:"lastname",toCheck:[{type:PropCheck.MAX_LENGTH,value:255}]}];
+        {prop:"lastname",toCheck:[{type:PropCheck.MAX_LENGTH,value:255}]}
+    ];
     
     const validation = validate(
         properties,
-        event?.body,
+        body,
         "Create Account");
 
+    return validation;
+}
+
+exports.handler = async (event,context) =>{
+    if(!verifyAppKey(event)){return Response.failed(ResponseCode.UN_AUTHORIZED);}
+    
+    const validation = validateInput(event?.body);
     if(!validation.passed){ return Response.create(400,{message:validation.message}); }
 
     const item = validation.item;

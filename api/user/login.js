@@ -40,16 +40,24 @@ const login = async (username,password) =>{
     catch(error){ return {success:false,message:error.message,code:500} }
 }
 
-exports.handler = async (event,context) =>{
-    if(!verifyAppKey(event)){return Response.failed(ResponseCode.UN_AUTHORIZED)}
+const validateInput = (body) =>{
     const properties = [
         {prop:"username",toCheck:[]},
-        {prop:"password",toCheck:[]}];
+        {prop:"password",toCheck:[]}
+    ];
     
     const validation = validate(
         properties,
-        event?.body,
+        body,
         "Login");
+        
+    return validation;
+}
+
+exports.handler = async (event,context) =>{
+    if(!verifyAppKey(event)){return Response.failed(ResponseCode.UN_AUTHORIZED)}
+  
+    const validation = validateInput(event?.body);
     if(!validation.passed){ return Response.create(400,{message:validation.message}); }
 
     const item = validation.item;
