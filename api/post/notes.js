@@ -4,8 +4,8 @@ const middy = require("@middy/core");
 const auth = require("../../middlewares/auth");
 
 const postNotes = async (event,context) =>{
-    console.log(event);
-    return Response.create(200,result)
+    if(event.error){return Response.failed(event.error);}
+    return Response.create(200,{success:true,user:event?.user});
 }
 
 const handler = middy(postNotes)

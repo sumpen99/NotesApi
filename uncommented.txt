@@ -1,3 +1,4 @@
+APP_KEY
 2023-11-26T12:16:31.385Z	9b41db90-df36-42c3-992f-e504989b3804	INFO	{
   accept: '*/*',
   app_key: 'df6fdea1-10c3-474c-ae62-e63def80de0b',
@@ -10,3 +11,57 @@
   'x-forwarded-port': '443',
   'x-forwarded-proto': 'https'
   }
+
+  BEARER
+  2023-11-26T15:20:23.021Z	b438e568-0a4e-4f1c-ae82-07c7d23a3174	INFO	{
+  version: '2.0',
+  routeKey: 'POST /api/notes',
+  rawPath: '/api/notes',
+  rawQueryString: '',
+  headers: {
+    accept: '*/*',
+    authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJvUzhpU21COUdzcGZnQ25fVkg4bUQiLCJ1c2VybmFtZSI6InN1bXBlbjk5IiwiaWF0IjoxNzAxMDExOTg5LCJleHAiOjE3MDEwMTU1ODl9.8xnbL954Bh-TUAGaq8tHb1nTXV50jGnk-Q3YGsBHXEg',
+    'content-length': '0',
+    'content-type': 'application/json',
+    host: 'z6d05n2eig.execute-api.eu-north-1.amazonaws.com',
+    'user-agent': 'insomnia/8.4.2',
+    'x-amzn-trace-id': 'Root=1-65636236-161c951a747f6c7c3b8d59eb',
+    'x-forwarded-for': '46.59.90.159',
+    'x-forwarded-port': '443',
+    'x-forwarded-proto': 'https'
+  },
+  requestContext: {
+    accountId: '900418923707',
+    apiId: 'z6d05n2eig',
+    domainName: 'z6d05n2eig.execute-api.eu-north-1.amazonaws.com',
+    domainPrefix: 'z6d05n2eig',
+    http: {
+      method: 'POST',
+      path: '/api/notes',
+      protocol: 'HTTP/1.1',
+      sourceIp: '46.59.90.159',
+      userAgent: 'insomnia/8.4.2'
+    },
+    requestId: 'PAxIhjePgi0EMFw=',
+    routeKey: 'POST /api/notes',
+    stage: '$default',
+    time: '26/Nov/2023:15:20:22 +0000',
+    timeEpoch: 1701012022280
+  },
+  isBase64Encoded: false
+}
+
+2023-11-26T15:20:23.026Z	b438e568-0a4e-4f1c-ae82-07c7d23a3174	ERROR	Invoke Error 	
+{
+    "errorType": "Error",
+    "errorMessage": "[object Object]",
+    "stack": [
+        "Error: [object Object]",
+        "    at Object.intoError (file:///var/runtime/index.mjs:46:16)",
+        "    at Object.textErrorLogger [as logError] (file:///var/runtime/index.mjs:684:56)",
+        "    at postError (file:///var/runtime/index.mjs:801:27)",
+        "    at done (file:///var/runtime/index.mjs:833:11)",
+        "    at fail (file:///var/runtime/index.mjs:845:11)",
+        "    at file:///var/runtime/index.mjs:872:20"
+    ]
+}

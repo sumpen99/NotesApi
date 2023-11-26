@@ -8,10 +8,10 @@ const {validate,PropCheck} = require("../../util/properties");
 const { ResponseCode } = require("../../util/responseCode");
 
 
-const tokenCreation = async (user,app_key) =>{
+const tokenCreation = async (user) =>{
     try{
         const payload = Payload.create(user.id,user.username);
-        const token = generateToken(payload,app_key);
+        const token = generateToken(payload,process.env.APP_KEY);
         return {success:true,token:token}
     }
     catch(error){ return {success:false,message:error.message,code:500}}
@@ -27,7 +27,7 @@ const getUser = async (username) =>{
     catch(error){ return {hasUser:false,message:error.message,code:500}; }
 }
 
-const login = async (username,password,app_key) =>{
+const login = async (username,password) =>{
     const result = await getUser(username);
     if(!result.hasUser){ return {success:false,message: result.message,code:result.code};}
 
@@ -35,7 +35,7 @@ const login = async (username,password,app_key) =>{
     try{
         const correctPassword = await bcrypt.compare(password,user.password);
         if(!correctPassword){ return {success:false,message:"Incorrect username or password",code:404};}
-        return tokenCreation(user,app_key);
+        return tokenCreation(user);
     }
     catch(error){ return {success:false,message:error.message,code:500} }
 }
@@ -53,7 +53,7 @@ exports.handler = async (event,context) =>{
     if(!validation.passed){ return Response.create(400,{message:validation.message}); }
 
     const item = validation.item;
-    const result = await login(item.username,item.password,event?.headers["app_key"]);
+    const result = await login(item.username,item.password);
     if(result.success){ return Response.create(200,result) }
     return Response.create(result.code,{message:result.message});
 }

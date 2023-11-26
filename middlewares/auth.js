@@ -5,20 +5,25 @@ const {ResponseCode} = require("../util/responseCode")
 module.exports = {
     before: async (request) =>{
       try{
-        const { Authorization,app_key } = request.event?.headers;
-        if(Authorization) {
-            const [token, ...rest] = Authorization.split(" ").reverse();
-            const decodeData = await authenticate(token,app_key);
-            request.event.user = decodeData;
-            return request.response;
-        } else { UnAuthorized(); }
+        const { authorization } = request.event?.headers;
+        if(authorization) {
+            const [token, ...rest] = authorization.split(" ").reverse();
+            await authenticate(token)
+            .then((decodeData) =>{
+              request.event.user = decodeData;
+              return request.response;
+            })
+            .catch((error) =>{
+              throw error;
+            })
+      } else { UnAuthorized(); }
       }catch(error){
-        request.error = error;
+        request.event.error = error;
         return request.response;
       }
     },
     onError: async (request) =>{
-      request.error = ResponseCode.UN_AUTHORIZED;
+      request.event.error = ResponseCode.UN_AUTHORIZED;
       return request.response;
     }
 }
