@@ -1,12 +1,9 @@
-const {SERVER} = require("../../database/dynamodb")
-const {generateToken,verifyAppKey} = require("../../lib/authentication")
-const bcrypt = require("bcryptjs");
-const Payload = require("./payload")
-const {userParams} = require("../../query/get")
-const Response = require("../../util/response");
-const {validate,PropCheck} = require("../../util/properties");
+const {SERVER,Response,validate} = require("../../database/baseImports");
 const { ResponseCode } = require("../../util/responseCode");
-
+const Payload = require("./payload")
+const bcrypt = require("bcryptjs");
+const {generateToken,verifyAppKey} = require("../../lib/authentication")
+const {userParams} = require("../../query/get")
 
 const tokenCreation = async (user) =>{
     try{
@@ -24,7 +21,7 @@ const getUser = async (username) =>{
         if(Item){ return {hasUser:true,user:Item} }
         return {hasUser:false,message:"Incorrect username or password",code:404};
     }
-    catch(error){ return {hasUser:false,message:error.message,code:500}; }
+    catch(error){ return {hasUser:false,message:`Login failed with internal error -> [ ${error.message} ]`,code:500}; }
 }
 
 const login = async (username,password) =>{

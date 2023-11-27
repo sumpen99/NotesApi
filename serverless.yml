@@ -28,6 +28,12 @@ functions:
       - httpApi:
           path: '/api/notes'
           method: GET
+  getNote:
+    handler: api/get/note.handler
+    events:
+      - httpApi:
+          path: '/api/note/{id}'
+          method: GET
   postNotes:
     handler: api/post/notes.handler
     events:
@@ -35,7 +41,7 @@ functions:
           path: '/api/notes'
           method: POST
   putNotes:
-    handler: api/put/notes.handler
+    handler: api/put/notes.handler/{id}
     events:
       - httpApi:
           path: '/api/notes'
@@ -44,7 +50,7 @@ functions:
     handler: api/delete/notes.handler
     events:
       - httpApi:
-          path: '/api/notes'
+          path: '/api/notes{id}'
           method: DELETE
   signup:
     handler: api/user/signup.handler 

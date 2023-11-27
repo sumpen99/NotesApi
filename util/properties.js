@@ -17,24 +17,24 @@ const validate = (properties,body,title) =>{
         const outPut = {}
         properties.forEach((propertie) =>{
             const {prop,toCheck} = propertie;
-            if(!item[prop]){ errorMessage += ` [ missing parameter "${prop}" ], `; }
+            if(!item[prop]){ errorMessage += ` [ missing parameter \\"${prop}\\" ], `; }
             else{
                 toCheck.forEach((check) =>{
                     const type = check.type;
                     const value = check.value;
                     switch(type){
                         case PropCheck.CONTAINS:
-                            if(!item[prop].includes(value)){ errorMessage += `[ Invalid "${prop}". Does not contain "${value}". ], `;}
+                            if(!item[prop].includes(value)){ errorMessage += `[ Invalid \\"${prop}\\". Does not contain \\"${value}\\". ], `;}
                             break;
                         case PropCheck.EMAIL:
-                            // In a real application we should do a proper email verification, script -> send to adress !
+                            // In a real application we should do a proper email verification, script -> send to adress or something... !
                             if(!item[prop].includes("@") || (item[prop].length < 5 || item[prop].length > 255)){ errorMessage += `[ Invalid email provided ], `;} 
                             break;
                         case PropCheck.MIN_LENGTH:
-                            if(item[prop].length < parseInt(value)){ errorMessage += `[ Invalid "${prop}" , length is less then ${value} chars. ], `;}
+                            if(item[prop].length < parseInt(value)){ errorMessage += `[ Invalid \\"${prop}\\" , length is less then ${value} chars. ], `;}
                             break;
                         case PropCheck.MAX_LENGTH:
-                            if(item[prop].length > parseInt(value)){ errorMessage += `[ Invalid "${prop}" , length is greater then ${value} chars. ], `;}
+                            if(item[prop].length > parseInt(value)){ errorMessage += `[ Invalid \\"${prop}\\" , length is greater then ${value} chars. ], `;}
                             break;
                         case PropCheck.PASSWORD:
                             let errors = "";
@@ -45,10 +45,10 @@ const validate = (properties,body,title) =>{
                             if(errors){errorMessage += `[ invalid "password", did not meet following criteria: ${errors} ] `;}
                             break;
                         case PropCheck.NUMBER:
-                            if(item[prop].search(/\d/) == -1){ errorMessage += `[ Invalid "${prop}" does not contain at least one number [0-9] ], `};
+                            if(item[prop].search(/\d/) == -1){ errorMessage += `[ Invalid \\"${prop}\\" does not contain at least one number [0-9] ], `};
                             break;
                         case PropCheck.LETTERS:
-                            if(item[prop].search(/[a-zA-Z]/) == -1){ errorMessage += `[ Invalid "${prop}" does not contain at least one letter [a-Z,A-Z] ], `}
+                            if(item[prop].search(/[a-zA-Z]/) == -1){ errorMessage += `[ Invalid \\"${prop}\\" does not contain at least one letter [a-Z,A-Z] ], `}
                             break;
                         default:break
                     }

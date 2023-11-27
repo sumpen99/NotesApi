@@ -1,9 +1,7 @@
-const {SERVER} = require("../../database/dynamodb");
+const {SERVER,Response,validate,PropCheck} = require("../../database/baseImports");
+const {ResponseCode} = require("../../util/responseCode");
 const bcrypt = require("bcryptjs");
 const {createUser,sparseUser} = require("../../database/tableItems");
-const Response = require("../../util/response");
-const {validate,PropCheck} = require("../../util/properties");
-const {ResponseCode} = require("../../util/responseCode");
 const {verifyAppKey} = require("../../lib/authentication");
 
 const createAccount = async (username,password,email,firstname,lastname) =>{
@@ -21,7 +19,7 @@ const createAccount = async (username,password,email,firstname,lastname) =>{
         if(error.code === "ConditionalCheckFailedException"){
             return {success:false,message:`Create account failed. User already exists in database`,code:400}   
         }
-        return {success:false,message:`Create account failed with internal error`,code:500}
+        return {success:false,message:`Create account failed with internal error -> [ ${error.message} ]`,code:500}
     }
     
 }
