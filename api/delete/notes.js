@@ -5,11 +5,11 @@ const {createDeletedNote,sparseDeletedNote} = require("../../database/tableItems
 const executeMove = async (username,note) =>{
     try{
         const deletedNote = createDeletedNote(username,note);
-        const result = await SERVER.documentClient.put({
+        const dbResponse = await SERVER.documentClient.put({
             TableName:process.env.DYNAMO_DB_TABLE,
             Item:deletedNote,
        }).promise()
-       return {success:true,note:sparseDeletedNote(note)}
+       return {success:true,note:sparseDeletedNote(deletedNote)}
     }
     catch(error){ return {success:false,message:`Delete note failed with internal error -> [ ${error.message} ]`,code:500}; }
 }
@@ -17,8 +17,8 @@ const executeMove = async (username,note) =>{
 const executeDelete = async (username,noteId) =>{
     try{
         const params = specificNoteToMoveToTrash(username,noteId);
-        const {Item} = await SERVER.documentClient.delete(params).promise();
-        if(Item){ return executeMove(username,Item); }
+        const {Attributes} = await SERVER.documentClient.delete(params).promise();
+        if(Attributes){ return executeMove(username,Attributes); }
         return {success:false,message:"No note with given id was found.",code:404};
     }
     catch(error){ return {success:false,message:`Delete note failed with internal error -> [ ${error.message} ]`,code:500}; }

@@ -23,16 +23,28 @@ package:
 
 functions:
   getNotes:
-    handler: api/get/notes.handler
+    handler: api/get/notesAlive.handler
     events:
       - httpApi:
           path: '/api/notes'
           method: GET
   getNote:
-    handler: api/get/note.handler
+    handler: api/get/noteAlive.handler
     events:
       - httpApi:
           path: '/api/note/{id}'
+          method: GET
+  getNotesDeleted:
+    handler: api/get/notesDeleted.handler
+    events:
+      - httpApi:
+          path: '/api/notes/deleted'
+          method: GET
+  getNoteDeleted:
+    handler: api/get/noteDeleted.handler
+    events:
+      - httpApi:
+          path: '/api/note/deleted/{id}'
           method: GET
   postNotes:
     handler: api/post/notes.handler
@@ -41,16 +53,16 @@ functions:
           path: '/api/notes'
           method: POST
   putNotes:
-    handler: api/put/notes.handler/{id}
+    handler: api/put/notes.handler
     events:
       - httpApi:
-          path: '/api/notes'
+          path: '/api/notes/{id}'
           method: PUT
   deleteNotes:
     handler: api/delete/notes.handler
     events:
       - httpApi:
-          path: '/api/notes{id}'
+          path: '/api/notes/{id}'
           method: DELETE
   signup:
     handler: api/user/signup.handler 

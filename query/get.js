@@ -30,12 +30,42 @@ const allNotesAlive = (username) =>{
     }
 }
 
+const allNotesDeleted = (username) =>{
+  const {upperCasedUsername} = baseItemPropertie(username);
+    return { 
+        TableName: process.env.DYNAMO_DB_TABLE, 
+        KeyConditionExpression: "#pk = :pk And begins_with(#sk, :sk)",
+        ProjectionExpression: "id, title, #t, createdAt, updatedAt, removedAt",
+        ExpressionAttributeNames: {
+            "#pk": "PK",
+            "#sk": "SK",
+            "#t":"text",
+        },
+        ExpressionAttributeValues: {
+            ":pk": `USER#${upperCasedUsername}`,
+            ":sk": `NOTE#DELETED`
+        },
+    }
+}
+
 const specificNoteAlive = (username,noteId) =>{
   const {upperCasedUsername} = baseItemPropertie(username);
   return { 
       TableName: process.env.DYNAMO_DB_TABLE, 
       Key: {PK : `USER#${upperCasedUsername}`,SK:`NOTE#ALIVE#${noteId}`},
       ProjectionExpression: "id, title, #t, createdAt, updatedAt",
+      ExpressionAttributeNames: {
+        "#t":"text",
+    },
+  };
+}
+
+const specificNoteDeleted = (username,noteId) =>{
+  const {upperCasedUsername} = baseItemPropertie(username);
+  return { 
+      TableName: process.env.DYNAMO_DB_TABLE, 
+      Key: {PK : `USER#${upperCasedUsername}`,SK:`NOTE#DELETED#${noteId}`},
+      ProjectionExpression: "id, title, #t, createdAt, updatedAt, removedAt",
       ExpressionAttributeNames: {
         "#t":"text",
     },
@@ -54,7 +84,9 @@ const specificNoteToMoveToTrash = (username,noteId) =>{
 module.exports = {
     userParams,
     allNotesAlive,
+    allNotesDeleted,
     specificNoteAlive,
+    specificNoteDeleted,
     specificNoteToMoveToTrash
 }
 

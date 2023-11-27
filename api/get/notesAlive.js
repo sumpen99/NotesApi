@@ -5,8 +5,8 @@ const createQuery = async (username) =>{
     try{
         const params = allNotesAlive(username);
         const {Items} = await SERVER.documentClient.query(params).promise()
-        if(Items){return {success:true,notes:Items}}
-        return {success:true,note:{message:"You have no current saved notes. Post one and try again."}}
+        if(Items?.length){return {success:true,notes:Items}}
+        return {success:true,notes:{message:"You have no saved notes. Post one and join the fun."}}
     }
     catch(error){ 
         return {success:false,message:`Get notes failed with internal error -> [ ${error.message} ]`,code:500}

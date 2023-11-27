@@ -7,7 +7,7 @@ const {verifyAppKey} = require("../../lib/authentication");
 const createAccount = async (username,password,email,firstname,lastname) =>{
     const user = createUser(username,password,email,firstname,lastname);
     try{
-        const result = await SERVER.documentClient.put({
+        const dbResponse = await SERVER.documentClient.put({
             TableName:process.env.DYNAMO_DB_TABLE,
             Item:user,
             ConditionExpression:

@@ -4,7 +4,7 @@ const {createInitialNote,sparseNote} = require("../../database/tableItems");
 const postNote = async (username,title,text) =>{
     const note = createInitialNote(username,title,text);
     try{
-        const result = await SERVER.documentClient.put({
+        const dbResponse = await SERVER.documentClient.put({
             TableName:process.env.DYNAMO_DB_TABLE,
             Item:note,
        }).promise()
