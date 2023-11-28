@@ -13,14 +13,14 @@ const createQuery = async (username) =>{
     }
 }
 
-const getNotes = async (event,context) =>{
+const getDeletedNotes = async (event,context) =>{
     if(event.error){return Response.failed(event.error);}
-    let result = await createQuery(event.user?.username)
+    let result = await createQuery(event.user.username)
     if(result.success){ return Response.create(200,result.notes)}
     return Response.create(result.code,{message:result.message});
 }
 
-const handler = middy(getNotes)
+const handler = middy(getDeletedNotes)
                 .use(auth);
 
 module.exports = {handler};

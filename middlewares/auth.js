@@ -5,7 +5,7 @@ const {ResponseCode} = require("../util/responseCode")
 module.exports = {
     before: async (request) =>{
       try{
-        const { authorization } = request.event?.headers;
+        const { authorization } = request.event.headers;
         if(authorization) {
             const [token, ...rest] = authorization.split(" ").reverse();
             await authenticate(token)

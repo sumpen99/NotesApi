@@ -46,7 +46,8 @@ const validateInput = (body) =>{
     const validation = validate(
         properties,
         body,
-        "Login");
+        "Login",
+        properties.length);
         
     return validation;
 }
@@ -54,7 +55,7 @@ const validateInput = (body) =>{
 exports.handler = async (event,context) =>{
     if(!verifyAppKey(event)){return Response.failed(ResponseCode.UN_AUTHORIZED)}
   
-    const validation = validateInput(event?.body);
+    const validation = validateInput(event.body);
     if(!validation.passed){ return Response.create(400,{message:validation.message}); }
 
     const item = validation.item;

@@ -24,7 +24,8 @@ const validateInput = (body) =>{
     const validation = validate(
         properties,
         body,
-        "Post Note");
+        "Post Note",
+        properties.length);
     return validation;
 }
 
@@ -35,7 +36,7 @@ const postNotes = async (event,context) =>{
     if(!validation.passed){ return Response.create(400,{message:validation.message}); }
     
     let item = validation.item;
-    let result = await postNote(event.user?.username,item.title,item.text)
+    let result = await postNote(event.user.username,item.title,item.text)
     if(result.success){ return Response.create(200,result.note)}
     return Response.create(result.code,{message:result.message});
 }

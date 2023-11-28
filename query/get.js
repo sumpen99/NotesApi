@@ -35,7 +35,7 @@ const allNotesDeleted = (username) =>{
     return { 
         TableName: process.env.DYNAMO_DB_TABLE, 
         KeyConditionExpression: "#pk = :pk And begins_with(#sk, :sk)",
-        ProjectionExpression: "id, title, #t, createdAt, updatedAt, removedAt",
+        ProjectionExpression: "id, title, #t, createdAt, updatedAt, deletedAt",
         ExpressionAttributeNames: {
             "#pk": "PK",
             "#sk": "SK",
@@ -65,7 +65,7 @@ const specificNoteDeleted = (username,noteId) =>{
   return { 
       TableName: process.env.DYNAMO_DB_TABLE, 
       Key: {PK : `USER#${upperCasedUsername}`,SK:`NOTE#DELETED#${noteId}`},
-      ProjectionExpression: "id, title, #t, createdAt, updatedAt, removedAt",
+      ProjectionExpression: "id, title, #t, createdAt, updatedAt, deletedAt",
       ExpressionAttributeNames: {
         "#t":"text",
     },
@@ -81,13 +81,23 @@ const specificNoteToMoveToTrash = (username,noteId) =>{
   };
 }
 
+const specificNoteToRestoreFromTrash = (username,noteId) =>{
+  const {upperCasedUsername} = baseItemPropertie(username);
+  return { 
+      TableName: process.env.DYNAMO_DB_TABLE, 
+      Key: {PK : `USER#${upperCasedUsername}`,SK:`NOTE#DELETED#${noteId}`},
+      ReturnValues: 'ALL_OLD'
+  };
+}
+
 module.exports = {
     userParams,
     allNotesAlive,
     allNotesDeleted,
     specificNoteAlive,
     specificNoteDeleted,
-    specificNoteToMoveToTrash
+    specificNoteToMoveToTrash,
+    specificNoteToRestoreFromTrash
 }
 
 /*

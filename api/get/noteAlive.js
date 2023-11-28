@@ -15,7 +15,7 @@ const getNote = async (event,context) =>{
     if(event.error){return Response.failed(event.error);}
     if(!event.pathParameters?.id){return Response.create(404,{message:"NoteId is not present in request."});}
 
-    let result = await createQuery(event.user?.username,event.pathParameters?.id)
+    let result = await createQuery(event.user.username,event.pathParameters.id)
     if(result.success){ return Response.create(200,result.note)}
     return Response.create(result.code,{message:result.message});
 }

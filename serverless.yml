@@ -22,6 +22,12 @@ package:
   individually: true
 
 functions:
+  restoreNotes:
+    handler: api/restore/note.handler
+    events:
+      - httpApi:
+          path: '/api/restore/notes/{id}'
+          method: GET
   getNotes:
     handler: api/get/notesAlive.handler
     events:
@@ -32,7 +38,7 @@ functions:
     handler: api/get/noteAlive.handler
     events:
       - httpApi:
-          path: '/api/note/{id}'
+          path: '/api/notes/{id}'
           method: GET
   getNotesDeleted:
     handler: api/get/notesDeleted.handler
@@ -44,7 +50,7 @@ functions:
     handler: api/get/noteDeleted.handler
     events:
       - httpApi:
-          path: '/api/note/deleted/{id}'
+          path: '/api/notes/deleted/{id}'
           method: GET
   postNotes:
     handler: api/post/notes.handler
