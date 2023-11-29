@@ -35,11 +35,11 @@ const signUp = async (username,password,email,firstname,lastname) =>{
 
 const validateInput = (body) =>{
     const properties = [
-        {prop:"username",toCheck:[{type:PropCheck.MIN_LENGTH,value:3},{type:PropCheck.MAX_LENGTH,value:255}]},
+        {prop:"username",toCheck:[{type:PropCheck.MIN_LENGTH,value:3},{type:PropCheck.MAX_LENGTH,value:50}]},
         {prop:"email",toCheck:[{type:PropCheck.EMAIL,value:""}]},
         {prop:"password",toCheck:[{type:PropCheck.PASSWORD,value:""}]},
-        {prop:"firstname",toCheck:[{type:PropCheck.MAX_LENGTH,value:255}]},
-        {prop:"lastname",toCheck:[{type:PropCheck.MAX_LENGTH,value:255}]}
+        {prop:"firstname",toCheck:[{type:PropCheck.MAX_LENGTH,value:50}]},
+        {prop:"lastname",toCheck:[{type:PropCheck.MAX_LENGTH,value:50}]}
     ];
     
     const validation = validate(
@@ -63,5 +63,5 @@ exports.handler = async (event,context) =>{
 
     if(result.success){ return Response.create(200,result.user)}
 
-    return Response.create(result.code,{message:result.message});
+    return Response.failed({data:result});
 }

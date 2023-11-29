@@ -1,23 +1,20 @@
-const {SERVER,Response,middy,auth,validate,PropCheck} = require("../../database/baseImports");
-const {createInitialNote,sparseNote} = require("../../database/tableItems");
+const {SERVER,Response,middy,auth,validate,PropCheck,ResponseCode} = require("../../database/baseImports");
+const {sparseUpdatedNote} = require("../../database/tableItems");
+const {noteParams} = require("../../query/update")
 
-const postNote = async (username,title,text) =>{
-    const note = createInitialNote(username,title,text);
+const updateNote = async (username,item,noteId) =>{
+    const params = noteParams(username,item,noteId);
     try{
-        const dbResponse = await SERVER.documentClient.put({
-            TableName:process.env.DYNAMO_DB_TABLE,
-            Item:note,
-       }).promise()
-        return {success:true,note:sparseNote(note)}
+        const dbResponse = await SERVER.documentClient.update(params).promise();
+        return {success:true,note:sparseUpdatedNote(dbResponse.Attributes)}
     }
     catch(error){ 
-        return {success:false,message:`Post note failed with internal error -> [ ${error.message} ]`,code:500}
+        if(error.code === "ConditionalCheckFailedException"){
+            return {success:false,message:`Update note failed. No note with given id exists in database`,code:400}   
+        }
+        return {success:false,message:`Put note failed with internal error -> [ ${error.message} ]`,code:500}
     }
     
-}
-
-const updateNote = () =>{
-
 }
 
 const validateInput = (body) =>{
@@ -33,17 +30,34 @@ const validateInput = (body) =>{
     return validation;
 }
 
+const createResponseMessage = (note,meta) =>{
+    var message = "Note updated";
+    if(meta.hasErrors && meta.errorMessage){
+        message += ` but all changes could not be applied. Encountered following errors -> ${meta.errorMessage}`;
+    }
+    let data = {
+        message:message,
+        note:note
+    }
+    return data;
+}
+
 const putNote = async (event,context) =>{
     if(event.error){return Response.failed(event.error);}
-    if(!event.pathParameters?.id){return Response.create(404,{message:"NoteId is not present in request."});}
-    
+    if(!event.pathParameters?.id){return Response.failed(ResponseCode.NOT_FOUND)}
+
     const validation = validateInput(event.body);
     if(!validation.passed){ return Response.create(400,{message:validation.message}); }
     
     let item = validation.item;
-    let result = await postNote(event.user.username,item.title,item.text)
-    if(result.success){ return Response.create(200,result.note)}
-    return Response.create(result.code,{message:result.message});
+    let meta = validation.meta;
+    let noteId = event.pathParameters.id;
+    let result = await updateNote(event.user.username,item,noteId);
+    if(result.success){
+        let data = createResponseMessage(result.note,meta);
+        return Response.create(200,data)
+    }
+    return Response.failed({data:result});
 }
 
 const handler = middy(putNote)

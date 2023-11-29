@@ -17,7 +17,7 @@ const getDeletedNotes = async (event,context) =>{
     if(event.error){return Response.failed(event.error);}
     let result = await createQuery(event.user.username)
     if(result.success){ return Response.create(200,result.notes)}
-    return Response.create(result.code,{message:result.message});
+    return Response.failed({data:result});
 }
 
 const handler = middy(getDeletedNotes)

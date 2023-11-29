@@ -1,6 +1,7 @@
 const {SERVER,Response,middy,auth} = require("../../database/baseImports");
 const {allNotesAlive} = require("../../query/get");
 
+
 const createQuery = async (username) =>{
     try{
         const params = allNotesAlive(username);
@@ -17,7 +18,7 @@ const getNotes = async (event,context) =>{
     if(event.error){return Response.failed(event.error);}
     let result = await createQuery(event.user.username)
     if(result.success){ return Response.create(200,result.notes)}
-    return Response.create(result.code,{message:result.message});
+    return Response.failed({data:result});
 }
 
 const handler = middy(getNotes)

@@ -38,7 +38,7 @@ const postNotes = async (event,context) =>{
     let item = validation.item;
     let result = await postNote(event.user.username,item.title,item.text)
     if(result.success){ return Response.create(200,result.note)}
-    return Response.create(result.code,{message:result.message});
+    return Response.failed({data:result});
 }
 
 const handler = middy(postNotes)

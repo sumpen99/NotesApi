@@ -48,7 +48,7 @@ const createInitialNote = (username,title,text) =>{
     }
 }
 
-const createUpdatedNote = (username,note,title,text) =>{
+const createUpdatedNote = (username,data) =>{
     const {upperCasedUsername,createdAt} = baseItemPropertie(username);
     return {
         PK:`USER#${upperCasedUsername}`,
@@ -103,6 +103,13 @@ const sparseDeletedNote = (note) =>{
     }
 }
 
+const sparseUpdatedNote = (note) =>{
+    return {
+        id:note.id,
+        updatedAt:note.updatedAt
+    }
+}
+
 const sparseRestoredNote = (note) =>{
     return {
         id:note.id,
@@ -118,6 +125,7 @@ module.exports = {
     sparseDeletedNote,
     sparseUser,
     sparseNote,
+    sparseUpdatedNote,
     sparseRestoredNote,
 }
 

@@ -61,5 +61,5 @@ exports.handler = async (event,context) =>{
     const item = validation.item;
     const result = await login(item.username,item.password);
     if(result.success){ return Response.create(200,result) }
-    return Response.create(result.code,{message:result.message});
+    return Response.failed({data:result});
 }

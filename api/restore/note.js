@@ -1,4 +1,4 @@
-const {SERVER,Response,middy,auth} = require("../../database/baseImports");
+const {SERVER,Response,middy,auth,ResponseCode} = require("../../database/baseImports");
 const {specificNoteToRestoreFromTrash} = require("../../query/get");
 const {createRestoredNote,sparseRestoredNote} = require("../../database/tableItems")
 
@@ -26,12 +26,12 @@ const executeDelete = async (username,noteId) =>{
 
 const restoreAndMoveNote = async (event,context) =>{
     if(event.error){return Response.failed(event.error);}
-    if(!event.pathParameters?.id){return Response.create(404,{message:"NoteId is not present in request."});}
+    if(!event.pathParameters?.id){return Response.failed(ResponseCode.NOT_FOUND)}
 
     let user = event.user,id = event.pathParameters?.id;
     let result = await executeDelete(user.username,id);
     if(result.success){ return Response.create(200,result.note) }
-    return Response.create(result.code,{message:result.message});
+    return Response.failed({data:result});
 }
 
 const handler = middy(restoreAndMoveNote)
