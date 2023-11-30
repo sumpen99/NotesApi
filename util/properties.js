@@ -2,11 +2,12 @@ const PropCheck = Object.freeze({
     CONTAINS:0,
     MIN_LENGTH:1,
     MAX_LENGTH:2,
-    NUMBER:3,
-    LETTERS:4,
-    EMAIL:5,
-    PASSWORD:6,
-    SPECIAL_CHAR:7
+    LENGTH_RANGE:3,
+    NUMBER:4,
+    LETTERS:5,
+    EMAIL:6,
+    PASSWORD:7,
+    SPECIAL_CHAR:8
 });
 
 
@@ -39,7 +40,7 @@ const validate = (properties,body,title,requiredToPass) =>{
         const outPut = {}
         properties.forEach((propertie) =>{
             const {prop,toCheck} = propertie;
-            if(!item[prop]){ errorMessage += ` [ Missing parameter -> ${prop} <- ], `; }
+            if(!item[prop]){ errorMessage += ` [ Missing parameter ${prop} ], `; }
             else{
                 let newErrors = "";
                 toCheck.forEach((check) =>{
@@ -47,17 +48,21 @@ const validate = (properties,body,title,requiredToPass) =>{
                     const value = check.value;
                     switch(type){
                         case PropCheck.CONTAINS:
-                            if(!item[prop].includes(value)){ newErrors += `[ Invalid -> ${prop} <-. Does not contain -> ${value} <- ], `;}
+                            if(!item[prop].includes(value)){ newErrors += `[ Invalid ${prop}. Does not contain: ${value}  ], `;}
                             break;
                         case PropCheck.EMAIL:
                             // In a real application we should do a proper email verification, script -> send to adress or something... !
                             if(!item[prop].includes("@") || (item[prop].length < 5 || item[prop].length > 255)){ newErrors += `[ Invalid email provided ], `;} 
                             break;
                         case PropCheck.MIN_LENGTH:
-                            if(item[prop].length < parseInt(value)){ newErrors += `[ Invalid -> ${prop} <-. Length is less then -> ${value} <- chars. ], `;}
+                            if(item[prop].length < parseInt(value)){ newErrors += `[ Invalid ${prop}. Length is less then: ${value} chars. ], `;}
                             break;
                         case PropCheck.MAX_LENGTH:
-                            if(item[prop].length > parseInt(value)){ newErrors += `[ Invalid \\"${prop} <-. Length is greater then -> ${value} <- chars. ], `;}
+                            if(item[prop].length > parseInt(value)){ newErrors += `[ Invalid ${prop}. Length is greater then: ${value} chars. ], `;}
+                            break;
+                        case PropCheck.LENGTH_RANGE:
+                            const {minLen,maxLen} = value;
+                            if(parseInt(minLen) > item[prop].length || item[prop].length > parseInt(maxLen)){ newErrors += `[ Invalid ${prop}. Length has to be in range of: ${minLen} - ${maxLen} chars. ], `;}
                             break;
                         case PropCheck.PASSWORD:
                             let errors = "";
@@ -65,16 +70,16 @@ const validate = (properties,body,title,requiredToPass) =>{
                             if(item[prop].length > 50){ errors += ` Length must be less or equal to 50 chars,`}
                             if(item[prop].search(/\d/) == -1){ errors += ` Has to contain at least one number [0-9],`}
                             if(item[prop].search(/[a-zA-Z]/) == -1){ errors += ` Has to contain at least one letter [a-z,A-Z],`}
-                            if(errors){newErrors += `[ Invalid -> password <-. Did not meet following criteria: ${errors} ] `;}
+                            if(errors){newErrors += `[ Invalid password. Did not meet following criteria: ${errors} ] `;}
                             break;
                         case PropCheck.NUMBER:
-                            if(item[prop].search(/\d/) == -1){ newErrors += `[ Invalid -> ${prop} <-. Does not contain at least one number -> 0-9 <- ], `};
+                            if(item[prop].search(/\d/) == -1){ newErrors += `[ Invalid ${prop}. Does not contain at least one number: 0-9 ], `};
                             break;
                         case PropCheck.LETTERS:
-                            if(item[prop].search(/[a-zA-Z]/) == -1){ newErrors += `[ Invalid -> ${prop} <-. Does not contain at least one letter -> a-Z,A-Z <- ], `}
+                            if(item[prop].search(/[a-zA-Z]/) == -1){ newErrors += `[ Invalid ${prop}. Does not contain at least one letter: a-Z,A-Z ], `}
                             break;
                         case PropCheck.SPECIAL_CHAR:
-                            if(!containsSpecialChar(item[prop])){ newErrors += `[ Invalid -> ${prop} <-. Does not contain at least one special character ], `}
+                            if(!containsSpecialChar(item[prop])){ newErrors += `[ Invalid ${prop}. Does not contain at least one special character ], `}
                             break;
                         default:break
                     }
@@ -85,16 +90,18 @@ const validate = (properties,body,title,requiredToPass) =>{
             
         })
 
+        let propertiesSent = objectLength(item);
         let propertiesPassed = objectLength(outPut);
         if(propertiesPassed >= requiredToPass ){ 
             return {
                 passed:true,
                 item:outPut,
                 meta:{
+            propertiesSent:propertiesSent,
             propertiesChecked:properties.length,
             propertiesPassed:propertiesPassed,
             requiredToPass:requiredToPass,
-            hasErrors: propertiesPassed !== properties.length,
+            hasErrors: propertiesPassed !== propertiesSent,
             errorMessage:errorMessage
         }};}
         

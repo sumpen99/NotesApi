@@ -17,7 +17,7 @@ const allNotesAlive = (username) =>{
     return { 
         TableName: process.env.DYNAMO_DB_TABLE, 
         KeyConditionExpression: "#pk = :pk And begins_with(#sk, :sk)",
-        ProjectionExpression: "id, title, #t, createdAt, updatedAt",
+        ProjectionExpression: "id, title, #t, createdAt, modifiedAt",
         ExpressionAttributeNames: {
             "#pk": "PK",
             "#sk": "SK",
@@ -35,7 +35,7 @@ const allNotesDeleted = (username) =>{
     return { 
         TableName: process.env.DYNAMO_DB_TABLE, 
         KeyConditionExpression: "#pk = :pk And begins_with(#sk, :sk)",
-        ProjectionExpression: "id, title, #t, createdAt, updatedAt, deletedAt",
+        ProjectionExpression: "id, title, #t, createdAt, deletedAt",
         ExpressionAttributeNames: {
             "#pk": "PK",
             "#sk": "SK",
@@ -53,7 +53,7 @@ const specificNoteAlive = (username,noteId) =>{
   return { 
       TableName: process.env.DYNAMO_DB_TABLE, 
       Key: {PK : `USER#${upperCasedUsername}`,SK:`NOTE#ALIVE#${noteId}`},
-      ProjectionExpression: "id, title, #t, createdAt, updatedAt",
+      ProjectionExpression: "id, title, #t, createdAt, modifiedAt",
       ExpressionAttributeNames: {
         "#t":"text",
     },
@@ -65,7 +65,7 @@ const specificNoteDeleted = (username,noteId) =>{
   return { 
       TableName: process.env.DYNAMO_DB_TABLE, 
       Key: {PK : `USER#${upperCasedUsername}`,SK:`NOTE#DELETED#${noteId}`},
-      ProjectionExpression: "id, title, #t, createdAt, updatedAt, deletedAt",
+      ProjectionExpression: "id, title, #t, createdAt, deletedAt",
       ExpressionAttributeNames: {
         "#t":"text",
     },

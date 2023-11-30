@@ -10,7 +10,7 @@ const collectUpdateExpression = (item,createdAt) =>{
     let updateExpression = "";
     let expressionAttributeNames = {};
     let expressionAttributeValues = {};
-    item["createdAt"] = createdAt;
+    item["modifiedAt"] = createdAt;
     Object.entries(item).forEach(([key,value],i) =>{
         if(i === 0){ updateExpression += `set #k${i} = :v${i}` }
         else{ updateExpression += `, #k${i} = :v${i}`}

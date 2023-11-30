@@ -28,7 +28,7 @@ const restoreAndMoveNote = async (event,context) =>{
     if(event.error){return Response.failed(event.error);}
     if(!event.pathParameters?.id){return Response.failed(ResponseCode.NOT_FOUND)}
 
-    let user = event.user,id = event.pathParameters?.id;
+    let user = event.user,id = event.pathParameters.id;
     let result = await executeDelete(user.username,id);
     if(result.success){ return Response.create(200,result.note) }
     return Response.failed({data:result});

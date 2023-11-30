@@ -1,12 +1,12 @@
 const {SERVER,Response,middy,auth,validate,PropCheck,ResponseCode} = require("../../database/baseImports");
-const {sparseUpdatedNote} = require("../../database/tableItems");
+const {sparseModifiedNote} = require("../../database/tableItems");
 const {noteParams} = require("../../query/update")
 
 const updateNote = async (username,item,noteId) =>{
     const params = noteParams(username,item,noteId);
     try{
         const dbResponse = await SERVER.documentClient.update(params).promise();
-        return {success:true,note:sparseUpdatedNote(dbResponse.Attributes)}
+        return {success:true,note:sparseModifiedNote(dbResponse.Attributes)}
     }
     catch(error){ 
         if(error.code === "ConditionalCheckFailedException"){

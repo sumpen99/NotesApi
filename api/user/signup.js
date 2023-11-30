@@ -35,7 +35,7 @@ const signUp = async (username,password,email,firstname,lastname) =>{
 
 const validateInput = (body) =>{
     const properties = [
-        {prop:"username",toCheck:[{type:PropCheck.MIN_LENGTH,value:3},{type:PropCheck.MAX_LENGTH,value:50}]},
+        {prop:"username",toCheck:[{type:PropCheck.LENGTH_RANGE,value:{minLen:3,maxLen:50}}]},
         {prop:"email",toCheck:[{type:PropCheck.EMAIL,value:""}]},
         {prop:"password",toCheck:[{type:PropCheck.PASSWORD,value:""}]},
         {prop:"firstname",toCheck:[{type:PropCheck.MAX_LENGTH,value:50}]},

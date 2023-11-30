@@ -15,4 +15,4 @@ const testReservedWords = (words) =>{
 
 
 
-testReservedWords(["id", "title", "text", "createdAt", "updatedAt"]);
+testReservedWords(["id", "title", "text", "createdAt", "modifiedeAt"]);

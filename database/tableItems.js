@@ -48,19 +48,6 @@ const createInitialNote = (username,title,text) =>{
     }
 }
 
-const createUpdatedNote = (username,data) =>{
-    const {upperCasedUsername,createdAt} = baseItemPropertie(username);
-    return {
-        PK:`USER#${upperCasedUsername}`,
-        SK:`NOTE#ALIVE#${note.id}`,
-        id:note.id,
-        title:title,
-        text:text,
-        createdAt:note.createdAt,
-        updatedAt:createdAt
-    }
-}
-
 const createDeletedNote = (username,note) =>{
     const {upperCasedUsername,createdAt} = baseItemPropertie(username);
     return {
@@ -70,7 +57,6 @@ const createDeletedNote = (username,note) =>{
         title:note.title,
         text:note.text,
         createdAt:note.createdAt,
-        updatedAt:note.updatedAt ?? note.createdAt,
         deletedAt:createdAt
     }
 }
@@ -84,36 +70,38 @@ const createRestoredNote = (username,note) =>{
         title:note.title,
         text:note.text,
         createdAt:note.createdAt,
-        restoredAt:createdAt,
-        updatedAt:createdAt
+        modifiedAt:createdAt
     }
 }
 
-const sparseNote = (note) =>{
+const sparsInitialNote = (note) =>{
     return {
         id:note.id,
         createdAt:note.createdAt
     }
 }
 
-const sparseDeletedNote = (note) =>{
+const sparseModifiedNote = (note) =>{
     return {
         id:note.id,
-        deletedAt:note.deletedAt
+        createdAt:note.createdAt,
+        modifiedAt:note.modifiedAt
     }
 }
 
-const sparseUpdatedNote = (note) =>{
+const sparseDeletedNote = (note) =>{
     return {
         id:note.id,
-        updatedAt:note.updatedAt
+        createdAt:note.createdAt,
+        deletedAt:note.deletedAt
     }
 }
 
 const sparseRestoredNote = (note) =>{
     return {
         id:note.id,
-        restoredAt:note.restoredAt
+        createdAt:note.createdAt,
+        restoredAt:note.modifiedAt
     }
 }
 
@@ -122,56 +110,9 @@ module.exports = {
     createInitialNote,
     createDeletedNote,
     createRestoredNote,
+    sparseModifiedNote,
     sparseDeletedNote,
-    sparseUser,
-    sparseNote,
-    sparseUpdatedNote,
     sparseRestoredNote,
+    sparsInitialNote,
+    sparseUser,
 }
-
-/*
-const user = {
-    PK:"",
-    SK:"",
-    id:"",
-    username:"",
-    password:"",
-    email:"",
-    firstname:"",
-    lastname:"",
-    dateOfCreation:Date()
-}
-
-const note = {
-    PK:"",
-    SK:"",
-    id:"",
-    title:"",
-    text:"",
-    createdAt:Date(),
-    modifiedAt:Date(),
-}
-*******************************************
-GET USER
-PK = USER#{username}
-SK = ACCOUNT#{email}
-*******************************************
-GET ALL NOTES  
-PK = USER#{username}
-SK BEGINS WITH NOTE#ALIVE
-*******************************************
-GET SPECIFIC NOTE 
-PK = USER#{username}
-SK = NOTE#ALIVE#ID
-FILTER: CREATED_AT,MODIFIED_AT ETC.
-*******************************************
-GET ALL DELETED NOTES
-PK = USER#{username}
-SK BEGINS WITH NOTE#DELETED
-*******************************************
-GET SPECIFIC DELETED NOTE
-PK = USER#{username}
-SK = NOTE#DELETED#ID
-FILTER: DELETED_AT ->(CREATED_AT?)
-*******************************************
-*/

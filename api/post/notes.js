@@ -1,5 +1,5 @@
 const {SERVER,Response,middy,auth,validate,PropCheck} = require("../../database/baseImports");
-const {createInitialNote,sparseNote} = require("../../database/tableItems");
+const {createInitialNote,sparsInitialNote} = require("../../database/tableItems");
 
 const postNote = async (username,title,text) =>{
     const note = createInitialNote(username,title,text);
@@ -8,7 +8,7 @@ const postNote = async (username,title,text) =>{
             TableName:process.env.DYNAMO_DB_TABLE,
             Item:note,
        }).promise()
-        return {success:true,note:sparseNote(note)}
+        return {success:true,note:sparsInitialNote(note)}
     }
     catch(error){ 
         return {success:false,message:`Post note failed with internal error -> [ ${error.message} ]`,code:500}
